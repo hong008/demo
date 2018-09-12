@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package proto;
+
+service Model {
+    rpc Stream (stream RequestInfo) returns (stream ResponseInfo) {
+    }
+    rpc Single (RequestInfo) returns (ResponseInfo) {
+    }
+}
+
+message RequestInfo {
+    int32 Pid = 1;
+    string Content = 2;
+}
+
+message ResponseInfo {
+    int32 Code = 1;
+    string Result = 2;
+}

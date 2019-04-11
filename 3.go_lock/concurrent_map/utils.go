@@ -1,8 +1,11 @@
 package concurrent_map
 
-/*
-    @Create by GoLand
-    @Author: hong
-    @Time: 2019-04-10 17:48 
-    @File: utils.go    
-*/
+//用于计算指定字符串的哈希值的整数形式
+func hash(str string) uint64 {
+	seed := uint64(13131)
+	var hash uint64
+	for i := 0; i < len(str); i++ {
+		hash = hash*seed + uint64(str[i])
+	}
+	return (hash & 0x7FFFFFFFFFFFFFFF)
+}

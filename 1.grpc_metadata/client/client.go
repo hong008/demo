@@ -149,7 +149,8 @@ func (c *GrpcClient) recv() {
 	for {
 		data, err := c.stream.Recv()
 		if err != nil {
-			panic(fmt.Sprintf("client recv fail...err = [%v]", err))
+			//panic(fmt.Sprintf("client recv fail...err = [%v]", err))
+			fmt.Println(fmt.Sprintf("client recv fail...err = [%v]", err))
 		}
 		//流逝客户端接收来自服务端的md
 		header, err := c.stream.Header()

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+	"io"
 )
 
 /*
@@ -97,7 +98,7 @@ func (s *GrpcServer) handler(req *proto.RequestInfo) error {
 	if req == nil {
 		return EmptyReqData
 	}
-	md, ok := metadata.FromContext(s.stream.Context())
+	md, ok := metadata.FromIncomingContext(s.stream.Context())
 	if ok {
 		fmt.Printf("md = %+v\n", md)
 	}
@@ -108,6 +109,10 @@ func (s *GrpcServer) handler(req *proto.RequestInfo) error {
 func (s *GrpcServer) recv() {
 	for {
 		data, err := s.stream.Recv()
+		if err == io.EOF {
+			fmt.Println("stream end")
+			return
+		}
 		if err != nil {
 			panic(fmt.Sprintf("server recv fail...[%v]", err))
 		}

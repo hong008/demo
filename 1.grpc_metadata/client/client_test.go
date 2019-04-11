@@ -1,9 +1,7 @@
 package client
 
 import (
-	"demo/1.grpc_metadata/proto"
 	"testing"
-	"time"
 )
 
 /*
@@ -14,7 +12,7 @@ import (
 */
 
 var (
-	url = ":13141"
+	url = ":13140"
 )
 
 func TestSingle(t *testing.T) {
@@ -24,20 +22,25 @@ func TestSingle(t *testing.T) {
 
 func TestGrpcClient_Write(t *testing.T) {
 	InitConn(url)
-	client := NewClient(NewStreamClient())
-	go func() {
-		client.Run()
-	}()
 
-	ticker := time.NewTicker(10 * time.Second)
+	client := NewClient(NewStreamClient())
+	client.Run()
+
+	/*ticker := time.NewTicker(10 * time.Second)
 	for {
 		select {
 		case <-ticker.C:
+			client := NewClient(NewStreamClient())
+			go func() {
+				client.Run()
+			}()
+
 			sendData := &proto.RequestInfo{
 				Pid:     1,
 				Content: "你好",
 			}
 			client.Write(sendData)
+			client.stream.CloseSend()
 		}
-	}
+	}*/
 }

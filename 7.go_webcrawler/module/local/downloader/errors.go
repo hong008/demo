@@ -1,8 +1,11 @@
 package downloader
 
-/*
-    @Create by GoLand
-    @Author: hong
-    @Time: 2019-04-17 16:08 
-    @File: errors.go    
-*/
+import "demo/7.go_webcrawler/errors"
+
+func genError(errMsg string) error {
+	return errors.NewCrawlerError(errors.ERROR_TYPE_DOWNLOADER, errMsg)
+}
+
+func genParameterError(errMsg string) error {
+	return errors.NewCrawlerErrorBy(errors.ERROR_TYPE_DOWNLOADER, errors.NewIllegalParameterError(errMsg))
+}

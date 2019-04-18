@@ -1,8 +1,5 @@
 package module
 
-/*
-    @Create by GoLand
-    @Author: hong
-    @Time: 2019-04-17 13:32 
-    @File: errors.go    
-*/
+import "errors"
+
+var ErrNotFoundModuleInstance = errors.New("not found module instance") //未找到组件实例

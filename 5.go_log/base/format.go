@@ -1,8 +1,12 @@
 package base
 
-/*
-    @Create by GoLand
-    @Author: hong
-    @Time: 2019-04-12 16:08 
-    @File: format.go    
-*/
+type LogFormat string
+
+const (
+	FORMAT_TEXT LogFormat = "text"
+	FORMAT_JSON LogFormat = "json"
+)
+
+const (
+	TIMESTAMP_FORMAT = "2006-01-02 15:04:05.999"
+)

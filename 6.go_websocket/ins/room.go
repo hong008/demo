@@ -1,29 +1,35 @@
-package __go_websocket
+package ins
 
-import (
-	"github.com/gorilla/websocket"
-	"net/http"
-)
+import "sync"
 
 //房间信息，内部包含所有的客户端连接
-type room interface {
-	broadcast([]byte) error
-	list() []client
-	getClientById(int32) client
+type Room interface {
+	Broadcast([]byte) error
+	List() []Client
+	GetClientById(int32) Client
+	Register(client Client)
+	UnRegister(client Client)
 }
 
 type myRoom struct {
-	clients map[client]bool //客户端
+	sync.RWMutex
+	clients map[Client]bool //客户端
+}
+
+func NewRoom() Room {
+	return &myRoom{
+		clients: map[Client]bool{},
+	}
 }
 
 func (r *myRoom) init() {
-	r.clients = make(map[client]bool)
+	r.clients = make(map[Client]bool)
 }
 
 //广播消息
-func (r *myRoom) broadcast(message []byte) error {
-	for _, c := range r.list() {
-		err := c.write(message)
+func (r *myRoom) Broadcast(message []byte) error {
+	for _, c := range r.List() {
+		err := c.Write(message)
 		if err != nil {
 			return err
 		}
@@ -31,33 +37,37 @@ func (r *myRoom) broadcast(message []byte) error {
 	return nil
 }
 
-func (r *myRoom) list() []client {
-	var result []client
+func (r *myRoom) List() []Client {
+	r.RLock()
+	var result []Client
 	for c := range r.clients {
 		result = append(result, c)
 	}
+	r.RUnlock()
 	return result
 }
 
-func (r *myRoom) getClientById(id int32) client {
+func (r *myRoom) GetClientById(id int32) Client {
+	r.RLock()
 	for c := range r.clients {
-		if c.getId() == id {
+		if c.GetId() == id {
+			r.RUnlock()
 			return c
 		}
 	}
+	r.RUnlock()
 	return nil
 }
 
-func Run(w http.ResponseWriter, r *http.Request) {
-	var upgrader = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-	}
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		panic(err)
-	}
-	client := &myClient{
-		conn: c,
-	}
+func (r *myRoom) Register(client Client) {
+	r.Lock()
+	r.clients[client] = true
+	r.Unlock()
+	return
+}
+
+func (r *myRoom) UnRegister(client Client) {
+	r.Lock()
+	delete(r.clients, client)
+	r.Unlock()
 }

@@ -1,8 +1,32 @@
-package __go_websocket
+package main
 
-/*
-    @Create by GoLand
-    @Author: hong
-    @Time: 2019-04-16 17:12 
-    @File: main.go    
-*/
+import (
+	"demo/6.go_websocket/ins"
+	"github.com/gorilla/websocket"
+	"net/http"
+)
+
+var (
+	addr = "192.168.1.192:8900"
+)
+
+func main() {
+	room := ins.NewRoom()
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		var upgrader = websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+		}
+		c, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			panic(err)
+		}
+		client := ins.NewClient(room, c)
+		room.Register(client)
+		go client.Receive()
+	})
+
+	if err := http.ListenAndServe(addr, nil); err != nil {
+		panic(err)
+	}
+}

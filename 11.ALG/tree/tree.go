@@ -209,3 +209,29 @@ func (tree *BinaryTreeNode) PostTraverse() (result string) {
 	}
 	return
 }
+
+//广度优先遍历
+func (tree *BinaryTreeNode) LevelTraverse() (result string) {
+	if tree == nil {
+		return
+	}
+
+	treeList := list.New()
+	treeList.PushBack(tree)
+
+	for treeList.Len() > 0 {
+		element := treeList.Front()
+		node := element.Value.(*BinaryTreeNode)
+
+		result += node.String()
+		treeList.Remove(element)
+
+		if node.Left != nil {
+			treeList.PushBack(node.Left)
+		}
+		if node.Right != nil {
+			treeList.PushBack(node.Right)
+		}
+	}
+	return
+}
